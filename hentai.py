@@ -3,7 +3,7 @@ import random
 import os
 from threading import active_count, Thread
 
-hlist = ["https://api.waifu.pics/nsfw/waifu","https://api.waifu.pics/nsfw/neko","https://api.waifu.pics/nsfw/blowjob"]
+hlist = ["https://api.waifu.pics/nsfw/waifu","https://api.waifu.pics/nsfw/neko","https://api.waifu.pics/nsfw/blowjob", "https://nekobot.xyz/api/image?type=hentai", "https://nekobot.xyz/api/image?type=hboobs", "https://nekobot.xyz/api/image?type=hanal"]
 threads = int(input("Threads: "))
 
 def isDirectory():
@@ -27,28 +27,56 @@ def download(url, end):
 				break
 
 			handle.write(block)
-			
 
-def init():
+def waifupics():
 	count = 0
 	hentai = 0
 	while count <= 1:
 		for stuff in hlist:
 			lmao = requests.get(stuff)
 			img = lmao.json()
-			link = img["url"]
-			if link.endswith(".png"):
-				download(link, 'png')
-			elif link.endswith(".jpg"):
-				download(link, 'jpg')
-			elif link.endswith(".gif"):
-				download(link, 'gif')
-		hentai += 1
-		print(f"Fetched {hentai} Hentai !")
+			if 'i.waifu.pics' in stuff:
+				if img["url"]:
+					link = img["url"]
+					ending = link.split('.')[3]
+					match ending:
+						case "jpg":
+							download(link, 'jpg')
+							hentai += 1
+							print(f'Fetched {hentai} hentai !')
+						case "png":
+							download(link, 'png')
+							hentai += 1
+							print(f'Fetched {hentai} hentai !')
+						case "gif":
+							download(link, 'gif')
+							hentai += 1
+							print(f'Fetched {hentai} hentai !')
+						case _:
+							print('Something went wrong')
+			else:
+				if img["success"] == True:
+					link = img["message"]
+					ending = link.split('.')[3]
+					match ending:
+						case "jpg":
+							download(link, 'jpg')
+							hentai += 1
+							print(f'Fetched {hentai} hentai !')
+						case "png":
+							download(link, 'png')
+							hentai += 1
+							print(f'Fetched {hentai} hentai !')
+						case "gif":
+							download(link, 'gif')
+							hentai += 1
+							print(f'Fetched {hentai} hentai !')
+						case _:
+							print('Something went wrong')
 
 isDirectory()
 for _ in iter(int, 1):
 	while True:
 		if (active_count() <= threads):
-			Thread(target=(init)).start()
+			Thread(target=(waifupics)).start()
 			break
